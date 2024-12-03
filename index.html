@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Orthomosaic</title>
+    <meta charset="utf-8" />
+    <style>
+        html, body, #map {
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+        }
+    </style>
+
+    <!-- Naèítání knihovny Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        // Inicializace mapy pomocí Leaflet
+        var map = L.map('map').setView([49.6433, 17.3697], 15); // Nastavte výchozí pozici a zoom mapy
+
+        // Pøidání OpenStreetMap jako základní vrstvy
+        var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Vytvoøení vlastní vrstvy mapy pro dlaždice
+        var imageMapLayer = L.tileLayer('tiles/{z}/{x}/{y}.png', {
+            minZoom: 15,
+            maxZoom: 23,
+            attribution: '&copy; Your Attribution'
+        });
+
+        // Pøidání dalších vrstev jako pøíklad
+        var line = {
+            "type": "Feature",
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [17.3697, 49.6433],
+                    [17.3700, 49.6440],
+                    [17.3710, 49.6445]
+                ]
+            },
+            "properties": {
+                "name": "Cyklotrasy" // název linie
+            }
+        };
+
+        // Pøidání linie do mapy a styl linie
+        L.geoJSON(line, {
+            style: {
+                color: "blue",
+                weight: 4,
+                opacity: 0.8
+            }
+        }).addTo(map);
+       
+        var grayscaleLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+            maxZoom: 23
+        });
+
+        // Definice vrstev pro kontrolu
+        var baseLayers = {
+            "OpenStreetMap": osmLayer,
+            "Grayscale": grayscaleLayer
+        };
+
+        var overlayLayers = {
+            "Ortofoto Fort è. II Radíkov": imageMapLayer   // název Ortofota
+        };
+
+        // Pøidání kontroly vrstev do mapy
+        L.control.layers(baseLayers, overlayLayers, { collapsed: true }).addTo(map);
+
+        // Výchozí pøidání orthomosaic vrstvy
+        imageMapLayer.addTo(map);
+        
+    </script>
+</body>
+</html>
+
